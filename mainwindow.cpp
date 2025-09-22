@@ -19,6 +19,18 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
   resize(1200, 900);
 
   connect_components();
+
+  this->setStyleSheet(R"(
+    QMenuBar {
+        font-size: 24px; 
+    }
+    QMenu {
+        font-size: 24px;  
+    }
+    QTabWidget {
+        font-size: 24px;  
+    }
+)");
 }
 
 MainWindow::~MainWindow() {}
