@@ -347,5 +347,6 @@
         <file>resfiles/tr/qtxmlpatterns_zh_CN.qm</file>
         <file>resfiles/tr/qtxmlpatterns_zh_TW.qm</file>
         <file>resfiles/icon/flag.png</file>
+        <file>resfiles/icon/xed.png</file>
     </qresource>
 </RCC>
