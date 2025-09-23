@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>resfiles/icon/window.jpg</file>
         <file>resfiles/tr/assistant_ar.qm</file>
         <file>resfiles/tr/assistant_bg.qm</file>
         <file>resfiles/tr/assistant_cs.qm</file>
@@ -348,5 +347,31 @@
         <file>resfiles/tr/qtxmlpatterns_zh_TW.qm</file>
         <file>resfiles/icon/flag.png</file>
         <file>resfiles/icon/xed.png</file>
+        <file>resfiles/icon/A.png</file>
+        <file>resfiles/icon/B.png</file>
+        <file>resfiles/icon/C.png</file>
+        <file>resfiles/icon/D.png</file>
+        <file>resfiles/icon/E.png</file>
+        <file>resfiles/icon/F.png</file>
+        <file>resfiles/icon/G.png</file>
+        <file>resfiles/icon/H.png</file>
+        <file>resfiles/icon/I.png</file>
+        <file>resfiles/icon/J.png</file>
+        <file>resfiles/icon/K.png</file>
+        <file>resfiles/icon/L.png</file>
+        <file>resfiles/icon/M.png</file>
+        <file>resfiles/icon/N.png</file>
+        <file>resfiles/icon/O.png</file>
+        <file>resfiles/icon/P.png</file>
+        <file>resfiles/icon/Q.png</file>
+        <file>resfiles/icon/R.png</file>
+        <file>resfiles/icon/S.png</file>
+        <file>resfiles/icon/T.png</file>
+        <file>resfiles/icon/U.png</file>
+        <file>resfiles/icon/V.png</file>
+        <file>resfiles/icon/W.png</file>
+        <file>resfiles/icon/X.png</file>
+        <file>resfiles/icon/Y.png</file>
+        <file>resfiles/icon/Z.png</file>
     </qresource>
 </RCC>
