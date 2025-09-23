@@ -6,13 +6,10 @@
 class TextEdit : public QPlainTextEdit {
   Q_OBJECT
  public:
-  explicit TextEdit(QWidget *parent = nullptr);
-
-  void zoom_font_size(int delta);
+  explicit TextEdit(const QFont &font, QWidget *parent = nullptr);
 
  protected:
   void wheelEvent(QWheelEvent *e) override;
-  void keyPressEvent(QKeyEvent *e) override;
 
  signals:
 };

@@ -20,17 +20,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
   connect_components();
 
-  this->setStyleSheet(R"(
-    QMenuBar {
-        font-size: 24px; 
-    }
-    QMenu {
-        font-size: 24px;  
-    }
-    QTabWidget {
-        font-size: 24px;  
-    }
-)");
+  zoom_view_font(0);
 }
 
 MainWindow::~MainWindow() {}
@@ -169,7 +159,7 @@ void MainWindow::file_close_all() {
 }
 
 void MainWindow::file_new_text() {
-  TextEdit *t = new TextEdit(this);
+  TextEdit *t = new TextEdit(editFont_, this);
   tabWidget_->addTab(t, tr("无标题"));
   tabWidget_->setCurrentWidget(t);
   textCodecIndexs_.insert(t, 0);
@@ -196,7 +186,7 @@ void MainWindow::file_open() {
       QTextStream in(&file);
       in.setCodec("UTF-8");
 
-      TextEdit *t = new TextEdit(this);
+      TextEdit *t = new TextEdit(editFont_, this);
       tabWidget_->addTab(t, QFileInfo(file).fileName());
       tabWidget_->setCurrentWidget(t);
 
@@ -236,10 +226,49 @@ void MainWindow::reopen(const QString &codec) {
   }
 }
 
+void MainWindow::zoom_edit_font(int delta) {
+  editFont_.setPointSize(
+      qBound(10, editFont_.pointSize() + delta, 128));
+  emit edit_font_changed();
+}
+
+void MainWindow::zoom_view_font(int delta) {
+  viewFont_.setPointSize(
+      qBound(12, viewFont_.pointSize() + delta, 48));
+  setFont(viewFont_);
+}
+
 void MainWindow::closeEvent(QCloseEvent *event) {
   file_close_all();
 }
+
+void MainWindow::wheelEvent(QWheelEvent *e) {
+  if (e->modifiers() & Qt::ControlModifier) {
+    if (e->angleDelta().y() > 0) {
+      zoom_edit_font(4);
+    } else {
+      zoom_edit_font(-4);
+    }
+    e->accept();
+    return;
+  }
+  QMainWindow::wheelEvent(e);
+}
 void MainWindow::connect_components() {
+  connect(menubar_->actZoomIn_, &QAction::triggered,
+          [=] { zoom_view_font(4); });
+  connect(menubar_->actZoomOut_, &QAction::triggered,
+          [=] { zoom_view_font(-4); });
+  connect(menubar_->actZoomInFont_, &QAction::triggered,
+          [=] { zoom_edit_font(1); });
+  connect(menubar_->actZoomOutFont_, &QAction::triggered,
+          [=] { zoom_edit_font(-1); });
+
+  connect(this, &MainWindow::edit_font_changed, [=] {
+    statubar_->fontLabel_->setText(tr("字体:%1|字号:%2")
+                                       .arg(editFont_.family())
+                                       .arg(editFont_.pointSize()));
+  });
   connect(menubar_->actUndo_, &QAction::triggered, [=] {
     if (tabWidget_->currentWidget()) {
       TextEdit *t =
@@ -314,7 +343,7 @@ void MainWindow::connect_components() {
   connect(menubar_->actQuit_, &QAction::triggered,
           [=] { this->close(); });
   connect(menubar_->actNewText_, &QAction::triggered, [=] {
-    TextEdit *t = new TextEdit(this);
+    TextEdit *t = new TextEdit(editFont_, this);
     tabWidget_->addTab(t, tr("无标题"));
     tabWidget_->setCurrentWidget(t);
     textCodecIndexs_.insert(t, 0);
@@ -328,7 +357,7 @@ void MainWindow::connect_components() {
     if (inputName.isNull()) {
       return;
     }
-    TextEdit *t = new TextEdit(this);
+    TextEdit *t = new TextEdit(editFont_, this);
     tabWidget_->addTab(t, inputName);
     tabWidget_->setCurrentWidget(t);
 
@@ -342,9 +371,11 @@ void MainWindow::connect_components() {
       file_close(tabWidget_->currentIndex());
     }
   });
+  // emit
+  emit edit_font_changed();
 }
 
-void MainWindow::connect_textedit(const TextEdit *t) {
+void MainWindow::connect_textedit(TextEdit *t) {
   if (!t) {
     return;
   }
@@ -356,4 +387,6 @@ void MainWindow::connect_textedit(const TextEdit *t) {
       tabWidget_->setTabIcon(tabWidget_->currentIndex(), QIcon());
     }
   });
+  connect(this, &MainWindow::edit_font_changed,
+          [=] { t->setFont(editFont_); });
 }

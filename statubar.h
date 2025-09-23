@@ -2,6 +2,7 @@
 #define STATUBAR_H
 
 #include <QComboBox>
+#include <QLabel>
 #include <QStatusBar>
 
 class StatuBar : public QStatusBar {
@@ -11,6 +12,7 @@ class StatuBar : public QStatusBar {
 
  public:
   QComboBox *codecBox_;
+  QLabel *fontLabel_;
 
  signals:
 };

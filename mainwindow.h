@@ -13,9 +13,10 @@ class MainWindow : public QMainWindow {
   Q_OBJECT
 
   void connect_components();
-  void connect_textedit(const TextEdit *t);
+  void connect_textedit(TextEdit *t);
 
  signals:
+  void edit_font_changed();
 
  public:
   MainWindow(QWidget *parent = nullptr);
@@ -31,11 +32,17 @@ class MainWindow : public QMainWindow {
 
   void reopen(const QString &codec);
 
+  void zoom_edit_font(int delta);
+  void zoom_view_font(int delta);
+
  private:
   BiMap<QString, QWidget *> openedFiles_;
   QHash<QWidget *, int> textCodecIndexs_;
 
   QDir xedPath_{QDir::homePath() + "/xed/"};
+
+  QFont editFont_{"Consolas", 24};
+  QFont viewFont_{"宋体", 24};
 
   TabWidget *tabWidget_;
   MenuBar *menubar_;
@@ -43,5 +50,6 @@ class MainWindow : public QMainWindow {
 
  protected:
   void closeEvent(QCloseEvent *event) override;
+  void wheelEvent(QWheelEvent *e) override;
 };
 #endif  // MAINWINDOW_H

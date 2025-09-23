@@ -4,6 +4,8 @@ MenuBar::MenuBar(QWidget *parent) : QMenuBar{parent} {
   // menu
   menuFile_ = addMenu(tr("文件(&F)"));
   menuEdit_ = addMenu(tr("编辑(&E)"));
+  menuView_ = addMenu(tr("视图(&V)"));
+
   // file action
   actNewText_ = menuFile_->addAction(tr("新建文本文件(&N)"));
   actNewText_->setShortcut(Qt::CTRL + Qt::Key_N);
@@ -67,4 +69,18 @@ MenuBar::MenuBar(QWidget *parent) : QMenuBar{parent} {
 
   actGo_ = menuEdit_->addAction(tr("转到(&G)"));
   actGo_->setShortcut(Qt::CTRL + Qt::Key_G);
+  // view action
+  actZoomInFont_ = menuView_->addAction(tr("放大编辑字体(&P)"));
+  actZoomInFont_->setShortcut(Qt::CTRL + Qt::Key_Equal);
+
+  actZoomOutFont_ = menuView_->addAction(tr("缩小编辑字体(&M)"));
+  actZoomOutFont_->setShortcut(Qt::CTRL + Qt::Key_Minus);
+
+  menuView_->addSeparator();
+
+  actZoomIn_ = menuView_->addAction(tr("放大界面字体"));
+  actZoomIn_->setShortcut(Qt::CTRL + Qt::ALT + Qt::Key_Equal);
+
+  actZoomOut_ = menuView_->addAction(tr("缩小界面字体"));
+  actZoomOut_->setShortcut(Qt::CTRL + Qt::ALT + Qt::Key_Minus);
 }

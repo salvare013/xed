@@ -12,6 +12,7 @@ class MenuBar : public QMenuBar {
   // menu
   QMenu *menuFile_;
   QMenu *menuEdit_;
+  QMenu *menuView_;
   // file action
   QAction *actNewText_;
   QAction *actNew_;
@@ -30,6 +31,11 @@ class MenuBar : public QMenuBar {
   QAction *actPaste_;
   QAction *actSelectAll_;
   QAction *actGo_;
+  // view action
+  QAction *actZoomInFont_;
+  QAction *actZoomOutFont_;
+  QAction *actZoomIn_;
+  QAction *actZoomOut_;
 
  signals:
 };
