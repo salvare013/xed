@@ -236,6 +236,10 @@ void MainWindow::zoom_view_font(int delta) {
   viewFont_.setPointSize(
       qBound(12, viewFont_.pointSize() + delta, 48));
   setFont(viewFont_);
+
+  menubar_->menuFile_->setFont(viewFont_);
+  menubar_->menuEdit_->setFont(viewFont_);
+  menubar_->menuView_->setFont(viewFont_);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {
@@ -255,6 +259,10 @@ void MainWindow::wheelEvent(QWheelEvent *e) {
   QMainWindow::wheelEvent(e);
 }
 void MainWindow::connect_components() {
+  connect(menubar_->actShowMax_, &QAction::triggered,
+          [=] { showMaximized(); });
+  connect(menubar_->actShowNormal_, &QAction::triggered,
+          [=] { showNormal(); });
   connect(menubar_->actZoomIn_, &QAction::triggered,
           [=] { zoom_view_font(4); });
   connect(menubar_->actZoomOut_, &QAction::triggered,

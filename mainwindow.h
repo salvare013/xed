@@ -42,7 +42,7 @@ class MainWindow : public QMainWindow {
   QDir xedPath_{QDir::homePath() + "/xed/"};
 
   QFont editFont_{"Consolas", 24};
-  QFont viewFont_{"宋体", 24};
+  QFont viewFont_{"宋体", 20};
 
   TabWidget *tabWidget_;
   MenuBar *menubar_;

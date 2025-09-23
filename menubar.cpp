@@ -83,4 +83,11 @@ MenuBar::MenuBar(QWidget *parent) : QMenuBar{parent} {
 
   actZoomOut_ = menuView_->addAction(tr("缩小界面字体"));
   actZoomOut_->setShortcut(Qt::CTRL + Qt::ALT + Qt::Key_Minus);
+
+  menuView_->addSeparator();
+
+  actShowMax_ = menuView_->addAction(tr("窗口最大化"));
+  actShowMax_->setShortcut(Qt::CTRL + Qt::Key_M);
+
+  actShowNormal_ = menuView_->addAction(tr("窗口复原"));
 }

@@ -36,6 +36,8 @@ class MenuBar : public QMenuBar {
   QAction *actZoomOutFont_;
   QAction *actZoomIn_;
   QAction *actZoomOut_;
+  QAction *actShowMax_;
+  QAction *actShowNormal_;
 
  signals:
 };
