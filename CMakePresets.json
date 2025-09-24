@@ -2,7 +2,7 @@
   "version": 8,
   "configurePresets": [
     {
-      "name": "vcpkg Debug",
+      "name": "debug",
       "displayName": "vcpkg Debug",
       "description": "vcpkg cmake Debug",
       "generator": "Ninja",
@@ -14,7 +14,7 @@
       }
     },
     {
-      "name": "vcpkg Release",
+      "name": "release",
       "displayName": "vcpkg Release",
       "description": "vcpkg cmake Release",
       "generator": "Ninja",
