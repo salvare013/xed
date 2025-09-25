@@ -13,6 +13,7 @@ class StatuBar : public QStatusBar {
  public:
   QComboBox *codecBox_;
   QLabel *fontLabel_;
+  QLabel *PosLabel_;
 
  signals:
 };

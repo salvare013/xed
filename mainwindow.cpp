@@ -3,6 +3,7 @@
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QMessageBox>
+#include <QTextBlock>
 #include "textedit.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
@@ -259,6 +260,51 @@ void MainWindow::wheelEvent(QWheelEvent *e) {
   QMainWindow::wheelEvent(e);
 }
 void MainWindow::connect_components() {
+  connect(menubar_->actGo_, &QAction::triggered, [=] {
+    if (tabWidget_->currentWidget()) {
+      TextEdit *t =
+          static_cast<TextEdit *>(tabWidget_->currentWidget());
+      while (true) {
+        bool ok;
+        QString text = QInputDialog::getText(
+            this, tr("输入位置"),
+            tr("输入要跳转到的行列号\n行列之间用.,;(半角)"
+               "中的任意符号或空格分隔(如1,2)"),
+            QLineEdit::Normal, "", &ok, Qt::WindowCloseButtonHint);
+        auto parts = text.split(QRegularExpression(R"([.,;\s]+)"),
+                                Qt::SkipEmptyParts);
+        qDebug() << parts;
+        if (!ok) {
+          break;
+        }
+        if (parts.size() > 2 || parts.size() < 1) {
+          continue;
+        }
+        int line, col;
+        line = qBound(1, parts[0].toInt(&ok), t->blockCount());
+        if (!ok) {
+          continue;
+        }
+        if (parts.size() == 2) {
+          col = parts[1].toInt(&ok);
+          if (!ok) {
+            continue;
+          }
+        }
+        auto block = t->document()->begin();
+
+        for (int i = 1; i < line; i++) {
+          block = block.next();
+        }
+        col = qBound(1, col, block.text().length() + 1);
+
+        QTextCursor cursor(block);
+        cursor.setPosition(block.position() + col - 1);
+        t->setTextCursor(cursor);
+      }
+    }
+  });
+
   connect(menubar_->actShowMax_, &QAction::triggered,
           [=] { showMaximized(); });
   connect(menubar_->actShowNormal_, &QAction::triggered,
@@ -334,10 +380,15 @@ void MainWindow::connect_components() {
           &MainWindow::file_close_all);
   connect(tabWidget_, &QTabWidget::currentChanged, [=](int index) {
     if (!tabWidget_->widget(index)) {
+      statubar_->PosLabel_->setText("");
       return;
     }
     TextEdit *t = static_cast<TextEdit *>(tabWidget_->widget(index));
     statubar_->codecBox_->setCurrentIndex(textCodecIndexs_.value(t));
+    statubar_->PosLabel_->setText(
+        tr("行%1,列%2")
+            .arg(t->textCursor().blockNumber() + 1)
+            .arg(t->textCursor().columnNumber() + 1));
   });
   connect(menubar_->actSave_, &QAction::triggered, [=] {
     if (tabWidget_->count()) {
@@ -359,14 +410,14 @@ void MainWindow::connect_components() {
     connect_textedit(t);
   });
   connect(menubar_->actNew_, &QAction::triggered, [=] {
-    QString inputName = QInputDialog::getText(
+    QString name = QInputDialog::getText(
         this, tr("新建文件"), tr("输入文件名:"), QLineEdit::Normal,
         "", nullptr, Qt::WindowCloseButtonHint);
-    if (inputName.isNull()) {
+    if (name.isNull()) {
       return;
     }
     TextEdit *t = new TextEdit(editFont_, this);
-    tabWidget_->addTab(t, inputName);
+    tabWidget_->addTab(t, name);
     tabWidget_->setCurrentWidget(t);
 
     textCodecIndexs_.insert(t, 0);
@@ -397,4 +448,10 @@ void MainWindow::connect_textedit(TextEdit *t) {
   });
   connect(this, &MainWindow::edit_font_changed,
           [=] { t->setFont(editFont_); });
+  connect(t, &QPlainTextEdit::cursorPositionChanged, [=] {
+    statubar_->PosLabel_->setText(
+        tr("行%1,列%2")
+            .arg(t->textCursor().blockNumber() + 1)
+            .arg(t->textCursor().columnNumber() + 1));
+  });
 }
