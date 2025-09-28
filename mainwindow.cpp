@@ -61,7 +61,7 @@ void MainWindow::file_save(int index) {
 
     if (file.open(QIODevice::Text | QIODevice::WriteOnly)) {
       QTextStream out(&file);
-      out.setCodec("UTF-8");
+      out.setCodec("UTF-8");  // only utf8
 
       out << t->toPlainText();
       file.close();
@@ -106,7 +106,7 @@ void MainWindow::file_save_as(int index) {
     TextEdit *t = static_cast<TextEdit *>(tabWidget_->widget(index));
 
     QTextStream out(&file);
-    out.setCodec("UTF-8");
+    out.setCodec("UTF-8");  // only utf8
 
     out << t->toPlainText();
     file.close();
@@ -185,7 +185,7 @@ void MainWindow::file_open() {
   if (file.open(QIODevice::Text | QIODevice::ReadOnly)) {
     if (file.size() < 1024 * 512) {
       QTextStream in(&file);
-      in.setCodec("UTF-8");
+      in.setCodec(statubar_->codecBox_->itemText(0).toUtf8());
 
       TextEdit *t = new TextEdit(editFont_, this);
       tabWidget_->addTab(t, QFileInfo(file).fileName());
