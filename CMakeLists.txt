@@ -52,7 +52,6 @@ else()
     # set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
     else()
         find_package(Qt5 REQUIRED COMPONENTS Widgets)
-        find_package(Qt5 REQUIRED COMPONENTS Widgets)
         add_executable(xed ${PROJECT_SOURCES}
         )
     endif()

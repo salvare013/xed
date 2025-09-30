@@ -13,9 +13,6 @@ class CodecSelector : public QDialog {
 
  signals:
   void codec_clicked(const QString& codec);
-
- private:
-  // void closeEvent(QCloseEvent* e) override;
 };
 
 #endif  // CODECSELECTOR_H

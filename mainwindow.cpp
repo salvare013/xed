@@ -246,6 +246,7 @@ void MainWindow::zoom_view_font(int delta) {
 
 void MainWindow::closeEvent(QCloseEvent* event) {
   file_close_all();
+  QMainWindow::closeEvent(event);
 }
 
 void MainWindow::wheelEvent(QWheelEvent* e) {
@@ -459,6 +460,8 @@ void MainWindow::connect_textedit(TextEdit* t) {
   }
   connect(t, &TextEdit::textChanged, [=] {
     if (t->document()->isModified()) {
+      qDebug() << t->document()->isModified();
+
       tabWidget_->setTabIcon(tabWidget_->currentIndex(),
                              QIcon(":/resfiles/icon/flag.png"));
     } else {
