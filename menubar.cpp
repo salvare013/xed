@@ -1,6 +1,6 @@
 #include "menubar.h"
 
-MenuBar::MenuBar(QWidget *parent) : QMenuBar{parent} {
+MenuBar::MenuBar(QWidget* parent) : QMenuBar{parent} {
   // menu
   menuFile_ = addMenu(tr("文件(&F)"));
   menuEdit_ = addMenu(tr("编辑(&E)"));
@@ -20,6 +20,10 @@ MenuBar::MenuBar(QWidget *parent) : QMenuBar{parent} {
   actOpen_ = menuFile_->addAction(QIcon(":/resfiles/icon/O.png"),
                                   tr("打开文件...(&O)"));
   actOpen_->setShortcut(Qt::CTRL + Qt::Key_O);
+
+  actReopen_ = menuFile_->addAction(QIcon(":/resfiles/icon/R.png"),
+                                    tr("重新打开文件(&R)"));
+  actReopen_->setShortcut(Qt::CTRL + Qt::Key_R);
 
   menuFile_->addSeparator();
 

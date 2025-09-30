@@ -4,16 +4,17 @@
 #include <QComboBox>
 #include <QLabel>
 #include <QStatusBar>
+#include "codeclabel.h"
 
 class StatuBar : public QStatusBar {
   Q_OBJECT
  public:
-  explicit StatuBar(QWidget *parent = nullptr);
+  explicit StatuBar(QWidget* parent = nullptr);
 
  public:
-  QComboBox *codecBox_;
-  QLabel *fontLabel_;
-  QLabel *PosLabel_;
+  QLabel* fontLabel_;
+  QLabel* PosLabel_;
+  CodecLabel* codecLabel_;
 
  signals:
 };

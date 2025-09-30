@@ -6,7 +6,7 @@
 #include <QTextBlock>
 #include "textedit.h"
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
+MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
   tabWidget_ = new TabWidget(this);
   menubar_ = new MenuBar(this);
   statubar_ = new StatuBar(this);
@@ -44,7 +44,7 @@ void MainWindow::file_close(int index) {
     }
   }
   openedFiles_.remove_by_value(tabWidget_->widget(index));
-  textCodecIndexs_.remove(tabWidget_->widget(index));
+  textCodecs_.remove(tabWidget_->widget(index));
 
   tabWidget_->removeTab(index);
 }
@@ -52,24 +52,26 @@ void MainWindow::file_save(int index) {
   if (!tabWidget_->widget(index)) {
     return;
   }
-  TextEdit *t = static_cast<TextEdit *>(tabWidget_->widget(index));
-  if (!t->document()->isModified()) {
+  if (tabWidget_->tabIcon(index).isNull()) {
     return;
   }
-  if (openedFiles_.is_contains_value(t)) {
-    QFile file(openedFiles_.key(t));
+
+  if (openedFiles_.is_contains_value(tabWidget_->widget(index))) {
+    QFile file(openedFiles_.key(tabWidget_->widget(index)));
 
     if (file.open(QIODevice::Text | QIODevice::WriteOnly)) {
+      TextEdit* t =
+          static_cast<TextEdit*>(tabWidget_->widget(index));
+
       QTextStream out(&file);
-      out.setCodec("UTF-8");  // only utf8
+      out.setCodec(defaultCodec_.toUtf8());  // only utf8
 
       out << t->toPlainText();
       file.close();
+
       t->document()->setModified(false);
-
-      textCodecIndexs_.insert(t, 0);
-      statubar_->codecBox_->setCurrentIndex(0);
-
+      textCodecs_.insert(t, defaultCodec_);
+      statubar_->codecLabel_->setText(defaultCodec_);
       tabWidget_->setTabIcon(index, QIcon());
     } else {
       QMessageBox::critical(this, tr("保存文件"),
@@ -103,21 +105,19 @@ void MainWindow::file_save_as(int index) {
 
   QFile file(fileName);
   if (file.open(QIODevice::Text | QIODevice::WriteOnly)) {
-    TextEdit *t = static_cast<TextEdit *>(tabWidget_->widget(index));
+    TextEdit* t = static_cast<TextEdit*>(tabWidget_->widget(index));
 
     QTextStream out(&file);
-    out.setCodec("UTF-8");  // only utf8
+    out.setCodec(defaultCodec_.toUtf8());  // only utf8
 
     out << t->toPlainText();
     file.close();
+
     tabWidget_->setTabText(index, QFileInfo(file).fileName());
     t->document()->setModified(false);
-
     openedFiles_.insert(file.fileName(), t);
-
-    textCodecIndexs_.insert(t, 0);
-    statubar_->codecBox_->setCurrentIndex(0);
-
+    textCodecs_.insert(t, defaultCodec_);
+    statubar_->codecLabel_->setText(defaultCodec_);
     tabWidget_->setTabIcon(index, QIcon());
   } else {
     QMessageBox::critical(this, tr("保存文件"), tr("保存文件失败!"));
@@ -154,16 +154,16 @@ void MainWindow::file_close_all() {
     }
   }
   openedFiles_.clear();
-  textCodecIndexs_.clear();
+  textCodecs_.clear();
 
   tabWidget_->clear();
 }
 
 void MainWindow::file_new_text() {
-  TextEdit *t = new TextEdit(editFont_, this);
+  TextEdit* t = new TextEdit(editFont_, this);
   tabWidget_->addTab(t, tr("无标题"));
   tabWidget_->setCurrentWidget(t);
-  textCodecIndexs_.insert(t, 0);
+  textCodecs_.insert(t, 0);
 
   connect_textedit(t);
 }
@@ -185,9 +185,11 @@ void MainWindow::file_open() {
   if (file.open(QIODevice::Text | QIODevice::ReadOnly)) {
     if (file.size() < 1024 * 512) {
       QTextStream in(&file);
-      in.setCodec(statubar_->codecBox_->itemText(0).toUtf8());
+      in.setCodec(defaultCodec_.toUtf8());
 
-      TextEdit *t = new TextEdit(editFont_, this);
+      TextEdit* t = new TextEdit(editFont_, this);
+      textCodecs_.insert(t, defaultCodec_);
+
       tabWidget_->addTab(t, QFileInfo(file).fileName());
       tabWidget_->setCurrentWidget(t);
 
@@ -195,7 +197,6 @@ void MainWindow::file_open() {
       file.close();
 
       openedFiles_.insert(file.fileName(), t);
-      textCodecIndexs_.insert(t, 0);
 
       connect_textedit(t);
     } else {
@@ -207,19 +208,19 @@ void MainWindow::file_open() {
     QMessageBox::critical(this, tr("打开文件"), tr("打开文件失败!"));
   }
 }
-void MainWindow::reopen(const QString &codec) {
+void MainWindow::reopen(const QString& codec) {
   if (openedFiles_.is_contains_value(tabWidget_->currentWidget())) {
     QFile file(openedFiles_.key(tabWidget_->currentWidget()));
     if (file.open(QIODevice::Text | QIODevice::ReadOnly)) {
       QTextStream in(&file);
       in.setCodec(codec.toUtf8());
 
-      TextEdit *t =
-          static_cast<TextEdit *>(tabWidget_->currentWidget());
+      TextEdit* t =
+          static_cast<TextEdit*>(tabWidget_->currentWidget());
       t->setPlainText(in.readAll());
       file.close();
 
-      textCodecIndexs_[t] = statubar_->codecBox_->currentIndex();
+      textCodecs_[t] = statubar_->codecLabel_->text();
     } else {
       QMessageBox::critical(this, tr("打开文件"),
                             tr("打开文件失败!"));
@@ -243,11 +244,11 @@ void MainWindow::zoom_view_font(int delta) {
   menubar_->menuView_->setFont(viewFont_);
 }
 
-void MainWindow::closeEvent(QCloseEvent *event) {
+void MainWindow::closeEvent(QCloseEvent* event) {
   file_close_all();
 }
 
-void MainWindow::wheelEvent(QWheelEvent *e) {
+void MainWindow::wheelEvent(QWheelEvent* e) {
   if (e->modifiers() & Qt::ControlModifier) {
     if (e->angleDelta().y() > 0) {
       zoom_edit_font(4);
@@ -260,10 +261,24 @@ void MainWindow::wheelEvent(QWheelEvent *e) {
   QMainWindow::wheelEvent(e);
 }
 void MainWindow::connect_components() {
+  connect(menubar_->actReopen_, &QAction::triggered, [=] {
+    if (openedFiles_.is_contains_value(
+            tabWidget_->currentWidget())) {
+      statubar_->codecLabel_->open_selector();
+      reopen(statubar_->codecLabel_->text());
+    }
+  });
+  connect(statubar_->codecLabel_, &CodecLabel::clicked, [=] {
+    if (openedFiles_.is_contains_value(
+            tabWidget_->currentWidget())) {
+      statubar_->codecLabel_->open_selector();
+      reopen(statubar_->codecLabel_->text());
+    }
+  });
   connect(menubar_->actGo_, &QAction::triggered, [=] {
     if (tabWidget_->currentWidget()) {
-      TextEdit *t =
-          static_cast<TextEdit *>(tabWidget_->currentWidget());
+      TextEdit* t =
+          static_cast<TextEdit*>(tabWidget_->currentWidget());
       while (true) {
         bool ok;
         QString text = QInputDialog::getText(
@@ -325,43 +340,43 @@ void MainWindow::connect_components() {
   });
   connect(menubar_->actUndo_, &QAction::triggered, [=] {
     if (tabWidget_->currentWidget()) {
-      TextEdit *t =
-          static_cast<TextEdit *>(tabWidget_->currentWidget());
+      TextEdit* t =
+          static_cast<TextEdit*>(tabWidget_->currentWidget());
       t->undo();
     }
   });
   connect(menubar_->actRedo_, &QAction::triggered, [=] {
     if (tabWidget_->currentWidget()) {
-      TextEdit *t =
-          static_cast<TextEdit *>(tabWidget_->currentWidget());
+      TextEdit* t =
+          static_cast<TextEdit*>(tabWidget_->currentWidget());
       t->redo();
     }
   });
   connect(menubar_->actCut_, &QAction::triggered, [=] {
     if (tabWidget_->currentWidget()) {
-      TextEdit *t =
-          static_cast<TextEdit *>(tabWidget_->currentWidget());
+      TextEdit* t =
+          static_cast<TextEdit*>(tabWidget_->currentWidget());
       t->cut();
     }
   });
   connect(menubar_->actCopy_, &QAction::triggered, [=] {
     if (tabWidget_->currentWidget()) {
-      TextEdit *t =
-          static_cast<TextEdit *>(tabWidget_->currentWidget());
+      TextEdit* t =
+          static_cast<TextEdit*>(tabWidget_->currentWidget());
       t->copy();
     }
   });
   connect(menubar_->actPaste_, &QAction::triggered, [=] {
     if (tabWidget_->currentWidget()) {
-      TextEdit *t =
-          static_cast<TextEdit *>(tabWidget_->currentWidget());
+      TextEdit* t =
+          static_cast<TextEdit*>(tabWidget_->currentWidget());
       t->paste();
     }
   });
   connect(menubar_->actSelectAll_, &QAction::triggered, [=] {
     if (tabWidget_->currentWidget()) {
-      TextEdit *t =
-          static_cast<TextEdit *>(tabWidget_->currentWidget());
+      TextEdit* t =
+          static_cast<TextEdit*>(tabWidget_->currentWidget());
       t->selectAll();
     }
   });
@@ -381,10 +396,13 @@ void MainWindow::connect_components() {
   connect(tabWidget_, &QTabWidget::currentChanged, [=](int index) {
     if (!tabWidget_->widget(index)) {
       statubar_->PosLabel_->setText("");
+      statubar_->codecLabel_->setText("");
+
       return;
     }
-    TextEdit *t = static_cast<TextEdit *>(tabWidget_->widget(index));
-    statubar_->codecBox_->setCurrentIndex(textCodecIndexs_.value(t));
+    TextEdit* t = static_cast<TextEdit*>(tabWidget_->widget(index));
+    statubar_->codecLabel_->setText(textCodecs_.value(t));
+
     statubar_->PosLabel_->setText(
         tr("行%1,列%2")
             .arg(t->textCursor().blockNumber() + 1)
@@ -397,15 +415,15 @@ void MainWindow::connect_components() {
   });
   connect(menubar_->actOpen_, &QAction::triggered, this,
           &MainWindow::file_open);
-  connect(statubar_->codecBox_, &QComboBox::currentTextChanged, this,
-          &MainWindow::reopen);
+
   connect(menubar_->actQuit_, &QAction::triggered,
           [=] { this->close(); });
   connect(menubar_->actNewText_, &QAction::triggered, [=] {
-    TextEdit *t = new TextEdit(editFont_, this);
+    TextEdit* t = new TextEdit(editFont_, this);
+    textCodecs_.insert(t, defaultCodec_);
+
     tabWidget_->addTab(t, tr("无标题"));
     tabWidget_->setCurrentWidget(t);
-    textCodecIndexs_.insert(t, 0);
 
     connect_textedit(t);
   });
@@ -416,11 +434,12 @@ void MainWindow::connect_components() {
     if (name.isNull()) {
       return;
     }
-    TextEdit *t = new TextEdit(editFont_, this);
+    TextEdit* t = new TextEdit(editFont_, this);
+    textCodecs_.insert(t, defaultCodec_);
+
     tabWidget_->addTab(t, name);
     tabWidget_->setCurrentWidget(t);
 
-    textCodecIndexs_.insert(t, 0);
     connect_textedit(t);
   });
   connect(tabWidget_, &QTabWidget::tabCloseRequested, this,
@@ -434,7 +453,7 @@ void MainWindow::connect_components() {
   emit edit_font_changed();
 }
 
-void MainWindow::connect_textedit(TextEdit *t) {
+void MainWindow::connect_textedit(TextEdit* t) {
   if (!t) {
     return;
   }

@@ -13,13 +13,13 @@ class MainWindow : public QMainWindow {
   Q_OBJECT
 
   void connect_components();
-  void connect_textedit(TextEdit *t);
+  void connect_textedit(TextEdit* t);
 
  signals:
   void edit_font_changed();
 
  public:
-  MainWindow(QWidget *parent = nullptr);
+  MainWindow(QWidget* parent = nullptr);
   ~MainWindow();
 
  public slots:
@@ -30,26 +30,28 @@ class MainWindow : public QMainWindow {
   void file_close_all();
   void file_new_text();
 
-  void reopen(const QString &codec);
+  void reopen(const QString& codec);
 
   void zoom_edit_font(int delta);
   void zoom_view_font(int delta);
 
  private:
-  BiMap<QString, QWidget *> openedFiles_;
-  QHash<QWidget *, int> textCodecIndexs_;
+  const QString defaultCodec_{"UTF-8"};
+
+  BiMap<QString, QWidget*> openedFiles_;
+  QHash<QWidget*, QString> textCodecs_;
 
   QDir xedPath_{QDir::homePath() + "/xed/"};
 
   QFont editFont_{"Consolas", 24};
   QFont viewFont_{"宋体", 16};
 
-  TabWidget *tabWidget_;
-  MenuBar *menubar_;
-  StatuBar *statubar_;
+  TabWidget* tabWidget_;
+  MenuBar* menubar_;
+  StatuBar* statubar_;
 
  protected:
-  void closeEvent(QCloseEvent *event) override;
-  void wheelEvent(QWheelEvent *e) override;
+  void closeEvent(QCloseEvent* event) override;
+  void wheelEvent(QWheelEvent* e) override;
 };
 #endif  // MAINWINDOW_H
