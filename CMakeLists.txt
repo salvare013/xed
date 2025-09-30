@@ -52,11 +52,14 @@ else()
     # set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
     else()
         find_package(Qt5 REQUIRED COMPONENTS Widgets)
-        add_executable(xed ${PROJECT_SOURCES})
+        find_package(Qt5 REQUIRED COMPONENTS Widgets)
+        add_executable(xed ${PROJECT_SOURCES}
+        )
     endif()
 endif()
 
 target_link_libraries(xed PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(xed PRIVATE Qt5::Widgets)
 target_link_libraries(xed PRIVATE Qt5::Widgets)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

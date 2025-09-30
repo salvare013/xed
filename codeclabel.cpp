@@ -1,6 +1,5 @@
 #include "codeclabel.h"
 #include <qdebug.h>
-#include <QIcon>
 #include <QMouseEvent>
 #include <QTextCodec>
 
