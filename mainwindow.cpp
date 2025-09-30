@@ -459,15 +459,10 @@ void MainWindow::connect_textedit(TextEdit* t) {
     return;
   }
   connect(t, &TextEdit::textChanged, [=] {
-    if (t->document()->isModified()) {
-      qDebug() << t->document()->isModified();
-
-      tabWidget_->setTabIcon(tabWidget_->currentIndex(),
-                             QIcon(":/resfiles/icon/flag.png"));
-    } else {
-      tabWidget_->setTabIcon(tabWidget_->currentIndex(), QIcon());
-    }
+    tabWidget_->setTabIcon(tabWidget_->currentIndex(),
+                           QIcon(":/resfiles/icon/flag.png"));
   });
+
   connect(this, &MainWindow::edit_font_changed,
           [=] { t->setFont(editFont_); });
   connect(t, &QPlainTextEdit::cursorPositionChanged, [=] {
