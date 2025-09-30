@@ -6,7 +6,7 @@
 #include <QTextCodec>
 #include <QVBoxLayout>
 
-CodecSelector::CodecSelector(QWidget* parent) {
+CodecSelector::CodecSelector(QWidget* parent) : QDialog(parent) {
   QLineEdit* input = new QLineEdit(this);
   QVBoxLayout* vl = new QVBoxLayout();
   QListWidget* codecList = new QListWidget(this);
