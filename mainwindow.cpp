@@ -294,7 +294,7 @@ void MainWindow::zoom_edit_font(int delta) {
 }
 
 void MainWindow::zoom_view_font(int delta) {
-  viewFont_.setPointSize(qBound(12, viewFont_.pointSize() + delta, 48));
+  viewFont_.setPointSize(qBound(12, viewFont_.pointSize() + delta, 36));
   setFont(viewFont_);
 
   menuBar_->menuFile_->setFont(viewFont_);
@@ -334,6 +334,7 @@ void MainWindow::connect_components() {
   connect(statusBar_->codecLabel_, &ClickableLabel::clicked, this,
           &MainWindow::file_reopen);
   connect(menuBar_->actGo_, &QAction::triggered, this, &MainWindow::edit_go);
+  connect(statusBar_->PosLabel_, &ClickableLabel::clicked, this, &MainWindow::edit_go);
   connect(menuBar_->actShowMax_, &QAction::triggered, [=] { showMaximized(); });
   connect(menuBar_->actShowNormal_, &QAction::triggered, [=] { showNormal(); });
   connect(menuBar_->actZoomIn_, &QAction::triggered, [=] { zoom_view_font(4); });

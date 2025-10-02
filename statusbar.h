@@ -13,7 +13,7 @@ class StatusBar : public QStatusBar {
 
  public:
   // QLabel* fontLabel_;
-  QLabel* PosLabel_;
+  ClickableLabel* PosLabel_;
   ClickableLabel* codecLabel_;
   ClickableLabel* fontLabel_;
 
