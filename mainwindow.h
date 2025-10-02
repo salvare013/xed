@@ -35,6 +35,8 @@ class MainWindow : public QMainWindow {
 
   void edit_go();
 
+  void view_select_edit_font();
+
   void zoom_edit_font(int delta);
   void zoom_view_font(int delta);
 

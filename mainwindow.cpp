@@ -176,7 +176,13 @@ void MainWindow::file_new_text() {
 
   connect_textedit(t);
 }
-
+void MainWindow::view_select_edit_font() {
+  statusBar_->fontLabel_->open_selector();
+  if (!statusBar_->fontLabel_->selected_text().isEmpty()) {
+    editFont_.setFamily(statusBar_->fontLabel_->selected_text());
+    emit edit_font_changed();
+  }
+}
 void MainWindow::edit_go() {
   if (tabWidget_->currentWidget()) {
     TextEdit* t = static_cast<TextEdit*>(tabWidget_->currentWidget());
@@ -334,14 +340,10 @@ void MainWindow::connect_components() {
   connect(menuBar_->actZoomOut_, &QAction::triggered, [=] { zoom_view_font(-4); });
   connect(menuBar_->actZoomInFont_, &QAction::triggered, [=] { zoom_edit_font(1); });
   connect(menuBar_->actZoomOutFont_, &QAction::triggered, [=] { zoom_edit_font(-1); });
-  connect(statusBar_->fontLabel_, &ClickableLabel::clicked, [=] {
-    statusBar_->fontLabel_->open_selector();
-    qDebug() << statusBar_->fontLabel_->selected_text();
-    if (!statusBar_->fontLabel_->selected_text().isEmpty()) {
-      editFont_.setFamily(statusBar_->fontLabel_->selected_text());
-      emit edit_font_changed();
-    }
-  });
+  connect(statusBar_->fontLabel_, &ClickableLabel::clicked, this,
+          &MainWindow::view_select_edit_font);
+  connect(menuBar_->actSelectEditFont_, &QAction::triggered, this,
+          &MainWindow::view_select_edit_font);
   connect(this, &MainWindow::edit_font_changed, [=] {
     statusBar_->fontLabel_->setText(
         tr("字体:%1|字号:%2").arg(editFont_.family()).arg(editFont_.pointSize()));
