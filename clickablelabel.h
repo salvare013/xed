@@ -8,14 +8,12 @@
 class ClickableLabel : public QLabel {
   Q_OBJECT
 
-  QPoint pressedPos_ = QPoint();
-  Selector* selector_ = nullptr;
-
  public:
   explicit ClickableLabel(QWidget* parent);
 
   void set_selector(const QString& title, const QStringList& list);
   void open_selector();
+  const QString& selected_text() const;
 
  signals:
   void clicked();
@@ -23,6 +21,11 @@ class ClickableLabel : public QLabel {
  protected:
   void mousePressEvent(QMouseEvent* event) override;
   void mouseReleaseEvent(QMouseEvent* event) override;
+
+ private:
+  QPoint pressedPos_ = QPoint();
+  Selector* selector_ = nullptr;
+  QString selectedText_;
 };
 
 #endif  // CLICKABLELABEL_H

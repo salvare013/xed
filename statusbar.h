@@ -12,9 +12,10 @@ class StatusBar : public QStatusBar {
   explicit StatusBar(QWidget* parent = nullptr);
 
  public:
-  QLabel* fontLabel_;
+  // QLabel* fontLabel_;
   QLabel* PosLabel_;
   ClickableLabel* codecLabel_;
+  ClickableLabel* fontLabel_;
 
  signals:
 };

@@ -25,7 +25,7 @@ void ClickableLabel::set_selector(const QString& title,
   });
   connect(selector_->list_, &QListWidget::itemClicked,
           [=](QListWidgetItem* item) {
-            setText(item->text());
+            selectedText_ = item->text();
             selector_->close();
           });
 }
@@ -34,7 +34,12 @@ void ClickableLabel::open_selector() {
   if (selector_ == nullptr) {
     return;
   }
+  selectedText_.clear();
   selector_->exec();
+}
+
+const QString& ClickableLabel::selected_text() const {
+  return selectedText_;
 }
 
 void ClickableLabel::mousePressEvent(QMouseEvent* event) {
