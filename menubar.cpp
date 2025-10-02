@@ -87,20 +87,22 @@ MenuBar::MenuBar(QWidget* parent) : QMenuBar{parent} {
       menuView_->addAction(QIcon(":/resfiles/icon/M.png"), tr("缩小编辑字体(&M)"));
   actZoomOutFont_->setShortcut(Qt::CTRL + Qt::Key_Minus);
 
-  actSelectEditFont_ = menuView_->addAction(tr("选择编辑字体"));
+  actSelectEditFont_ =
+      menuView_->addAction(QIcon(":/resfiles/icon/F.png"), tr("选择编辑字体"));
 
   menuView_->addSeparator();
 
-  actZoomIn_ = menuView_->addAction(tr("放大界面字体"));
+  actZoomIn_ = menuView_->addAction(QIcon(":/resfiles/icon/P.png"), tr("放大界面字体"));
   actZoomIn_->setShortcut(Qt::CTRL + Qt::ALT + Qt::Key_Equal);
 
-  actZoomOut_ = menuView_->addAction(tr("缩小界面字体"));
+  actZoomOut_ =
+      menuView_->addAction(QIcon(":/resfiles/icon/M.png"), tr("缩小界面字体"));
   actZoomOut_->setShortcut(Qt::CTRL + Qt::ALT + Qt::Key_Minus);
 
   menuView_->addSeparator();
 
-  actShowMax_ = menuView_->addAction(tr("窗口最大化"));
+  actShowMax_ = menuView_->addAction(QIcon(":/resfiles/icon/W.png"), tr("窗口最大化"));
   actShowMax_->setShortcut(Qt::CTRL + Qt::Key_M);
 
-  actShowNormal_ = menuView_->addAction(tr("窗口复原"));
+  actShowNormal_ = menuView_->addAction(QIcon(":/resfiles/icon/W.png"), tr("窗口复原"));
 }
