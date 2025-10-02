@@ -18,8 +18,8 @@ set(PROJECT_SOURCES
     mainwindow.h
     menubar.cpp
     menubar.h
-    statubar.cpp
-    statubar.h
+    statusbar.cpp
+    statusbar.h
     tabwidget.cpp
     tabwidget.h
     bimap.hpp
@@ -58,7 +58,6 @@ else()
 endif()
 
 target_link_libraries(xed PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
-target_link_libraries(xed PRIVATE Qt5::Widgets)
 target_link_libraries(xed PRIVATE Qt5::Widgets)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

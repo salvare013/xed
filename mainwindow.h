@@ -5,7 +5,7 @@
 #include <QMainWindow>
 #include "bimap.hpp"
 #include "menubar.h"
-#include "statubar.h"
+#include "statusbar.h"
 #include "tabwidget.h"
 #include "textedit.h"
 
@@ -14,6 +14,7 @@ class MainWindow : public QMainWindow {
 
   void connect_components();
   void connect_textedit(TextEdit* t);
+  void update_status(int index);
 
  signals:
   void edit_font_changed();
@@ -28,9 +29,11 @@ class MainWindow : public QMainWindow {
   void file_save(int index);
   void file_save_as(int index);
   void file_close_all();
+  void file_new();
   void file_new_text();
+  void file_reopen();
 
-  void reopen(const QString& codec);
+  void edit_go();
 
   void zoom_edit_font(int delta);
   void zoom_view_font(int delta);
@@ -47,11 +50,12 @@ class MainWindow : public QMainWindow {
   QFont viewFont_{"宋体", 16};
 
   TabWidget* tabWidget_;
-  MenuBar* menubar_;
-  StatuBar* statubar_;
+  MenuBar* menuBar_;
+  StatusBar* statusBar_;
 
  protected:
   void closeEvent(QCloseEvent* event) override;
-  void wheelEvent(QWheelEvent* e) override;
+  void wheelEvent(QWheelEvent* event) override;
+  void showEvent(QShowEvent* event) override;
 };
 #endif  // MAINWINDOW_H

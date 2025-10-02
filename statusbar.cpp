@@ -1,7 +1,7 @@
-#include "statubar.h"
+#include "statusbar.h"
 #include <QTextCodec>
 
-StatuBar::StatuBar(QWidget* parent) : QStatusBar{parent} {
+StatusBar::StatusBar(QWidget* parent) : QStatusBar{parent} {
   fontLabel_ = new QLabel(this);
   PosLabel_ = new QLabel(this);
   codecLabel_ = new CodecLabel(this);

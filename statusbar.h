@@ -6,10 +6,10 @@
 #include <QStatusBar>
 #include "codeclabel.h"
 
-class StatuBar : public QStatusBar {
+class StatusBar : public QStatusBar {
   Q_OBJECT
  public:
-  explicit StatuBar(QWidget* parent = nullptr);
+  explicit StatusBar(QWidget* parent = nullptr);
 
  public:
   QLabel* fontLabel_;

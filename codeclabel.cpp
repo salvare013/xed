@@ -10,7 +10,6 @@ CodecLabel::CodecLabel(QWidget* parent) : QLabel{parent} {
           [=](const QString& codec) {
             setText(codec);
             cs_->close();
-            qDebug() << "codec_clicked";
           });
 }
 
