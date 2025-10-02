@@ -12,7 +12,6 @@ class StatusBar : public QStatusBar {
   explicit StatusBar(QWidget* parent = nullptr);
 
  public:
-  // QLabel* fontLabel_;
   ClickableLabel* PosLabel_;
   ClickableLabel* codecLabel_;
   ClickableLabel* fontLabel_;
