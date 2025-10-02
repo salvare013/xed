@@ -326,12 +326,12 @@ void MainWindow::wheelEvent(QWheelEvent* event) {
 }
 
 void MainWindow::showEvent(QShowEvent* event) {
+  QMainWindow::showEvent(event);
+
   zoom_view_font(0);
   update_status(0);
   // emit
   emit edit_font_changed();
-
-  QMainWindow::showEvent(event);
 }
 void MainWindow::connect_components() {
   connect(tabWidget_, &QTabWidget::currentChanged, this,
