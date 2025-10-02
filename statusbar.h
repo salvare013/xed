@@ -4,7 +4,7 @@
 #include <QComboBox>
 #include <QLabel>
 #include <QStatusBar>
-#include "codeclabel.h"
+#include "clickablelabel.h"
 
 class StatusBar : public QStatusBar {
   Q_OBJECT
@@ -14,7 +14,7 @@ class StatusBar : public QStatusBar {
  public:
   QLabel* fontLabel_;
   QLabel* PosLabel_;
-  CodecLabel* codecLabel_;
+  ClickableLabel* codecLabel_;
 
  signals:
 };

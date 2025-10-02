@@ -25,10 +25,6 @@ set(PROJECT_SOURCES
     bimap.hpp
     textedit.h
     textedit.cpp
-    codecselector.h
-    codecselector.cpp
-    codeclabel.h
-    codeclabel.cpp
     res.qrc
 )
 
@@ -52,12 +48,18 @@ else()
     # set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
     else()
         find_package(Qt5 REQUIRED COMPONENTS Widgets)
+        find_package(Qt5 REQUIRED COMPONENTS Widgets)
+        find_package(Qt5 REQUIRED COMPONENTS Widgets)
         add_executable(xed ${PROJECT_SOURCES}
+            clickablelabel.h clickablelabel.cpp
+            selector.h selector.cpp
         )
     endif()
 endif()
 
 target_link_libraries(xed PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(xed PRIVATE Qt5::Widgets)
+target_link_libraries(xed PRIVATE Qt5::Widgets)
 target_link_libraries(xed PRIVATE Qt5::Widgets)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

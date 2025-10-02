@@ -338,7 +338,7 @@ void MainWindow::connect_components() {
           &MainWindow::update_status);
   connect(menuBar_->actReopen_, &QAction::triggered, this,
           &MainWindow::file_reopen);
-  connect(statusBar_->codecLabel_, &CodecLabel::clicked, this,
+  connect(statusBar_->codecLabel_, &ClickableLabel::clicked, this,
           &MainWindow::file_reopen);
   connect(menuBar_->actGo_, &QAction::triggered, this,
           &MainWindow::edit_go);
