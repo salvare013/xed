@@ -2,9 +2,9 @@
   "version": 8,
   "configurePresets": [
     {
-      "name": "debug",
-      "displayName": "vcpkg Debug",
-      "description": "vcpkg cmake Debug",
+      "name": "vcpkg-debug",
+      "displayName": "Vcpkg Debug",
+      "description": "Vcpkg Debug build",
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/build/Debug",
       "cacheVariables": {
@@ -14,15 +14,15 @@
       }
     },
     {
-      "name": "release",
-      "displayName": "vcpkg Release",
-      "description": "vcpkg cmake Release",
+      "name": "vcpkg-windows-release",
+      "displayName": "Vcpkg-Windows Release",
+      "description": "Vcpkg-Windows Release build",
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/build/Release",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
         "CMAKE_TOOLCHAIN_FILE": "~/vcpkg/scripts/buildsystems/vcpkg.cmake",
-        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+        "VCPKG_TARGET_TRIPLET": "x64-windows-static-md"
       }
     }
   ]
