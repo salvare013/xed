@@ -345,8 +345,9 @@
         <file>resfiles/tr/qtxmlpatterns_uk.qm</file>
         <file>resfiles/tr/qtxmlpatterns_zh_CN.qm</file>
         <file>resfiles/tr/qtxmlpatterns_zh_TW.qm</file>
+
+        <file>resfiles/xed.ico</file>
         <file>resfiles/icon/flag.png</file>
-        <file>resfiles/icon/xed.png</file>
         <file>resfiles/icon/A.png</file>
         <file>resfiles/icon/B.png</file>
         <file>resfiles/icon/C.png</file>

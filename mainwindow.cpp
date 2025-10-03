@@ -16,7 +16,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
   setStatusBar(statusBar_);
 
   setWindowTitle(tr("xed-xmx"));
-  setWindowIcon(QIcon(":/resfiles/icon/xed.png"));
+  setWindowIcon(QIcon(":/resfiles/xed.ico"));
   resize(1200, 900);
 
   connect_components();

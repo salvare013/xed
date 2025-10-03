@@ -27,7 +27,6 @@ set(PROJECT_SOURCES
 
 if(WIN32)
     add_executable(xed ${PROJECT_SOURCES} resfiles/ico.rc)
-
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/resfiles/xed.ico ${CMAKE_CURRENT_BINARY_DIR}/xed.ico COPYONLY)
 else()
     add_executable(xed ${PROJECT_SOURCES})
