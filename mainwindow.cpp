@@ -1,8 +1,10 @@
 #include "mainwindow.h"
+#include <QCoreApplication>
 #include <QDebug>
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QMessageBox>
+#include <QMimeDatabase>
 #include <QTextBlock>
 #include "textedit.h"
 
@@ -231,6 +233,18 @@ void MainWindow::file_open() {
   if (fileName.isNull()) {
     return;
   }
+
+  QMimeDatabase mime;
+  QString mimeType = mime.mimeTypeForFile(fileName).name().toLower();
+  if (!mimeType.startsWith("text/")) {
+    if (QFileInfo(fileName).suffix() == "json") {
+      qDebug() << "json file";
+    } else {
+      QMessageBox::warning(this, tr("打开文件"), tr("打开的文件类型不支持,无法打开!"));
+      return;
+    }
+  }
+
   if (openedFiles_.is_contains_key(fileName)) {
     QMessageBox::warning(this, tr("打开文件"), tr("文件%1已打开!").arg(fileName));
     tabWidget_->setCurrentWidget(openedFiles_.value(fileName));
@@ -327,6 +341,24 @@ void MainWindow::showEvent(QShowEvent* event) {
   update_status(0);
   // emit
   emit edit_font_changed();
+
+  // check arguments
+  QStringList arguments = QCoreApplication::arguments();
+  qDebug() << arguments;
+  if (arguments.size() == 2) {
+    if (arguments[1] == "-v") {
+      statusBar_->showMessage(tr("xed文本编辑器,version:0.1"));
+      qDebug() << "xed version 0.1";
+    } else {
+      QFileInfo path(arguments[1]);
+      if (path.exists() && path.isFile()) {
+        qDebug() << "is file";
+
+      } else {
+        qDebug() << "no file";
+      }
+    }
+  }
 }
 void MainWindow::connect_components() {
   connect(tabWidget_, &QTabWidget::currentChanged, this, &MainWindow::update_status);
