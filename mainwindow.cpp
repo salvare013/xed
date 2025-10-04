@@ -250,13 +250,14 @@ void MainWindow::file_open(const QString& fileName) {
     }
   }
   // open logic
-  if (openedFiles_.is_contains_key(fileName)) {
-    QMessageBox::warning(this, tr("打开文件"), tr("文件%1已打开!").arg(fileName));
-    tabWidget_->setCurrentWidget(openedFiles_.value(fileName));
+  if (openedFiles_.is_contains_key(fileInfo.absoluteFilePath())) {
+    QMessageBox::warning(this, tr("打开文件"),
+                         tr("文件%1已打开!").arg(fileInfo.absoluteFilePath()));
+    tabWidget_->setCurrentWidget(openedFiles_.value(fileInfo.absoluteFilePath()));
     return;
   }
 
-  QFile file(fileName);
+  QFile file(fileInfo.absoluteFilePath());
 
   if (file.open(QIODevice::Text | QIODevice::ReadOnly)) {
     if (file.size() < 1024 * 512) {
@@ -266,13 +267,13 @@ void MainWindow::file_open(const QString& fileName) {
       TextEdit* t = new TextEdit(editFont_, this);
       textCodecs_.insert(t, defaultCodec_);
 
-      tabWidget_->addTab(t, QFileInfo(file).fileName());
+      tabWidget_->addTab(t, fileInfo.fileName());
       tabWidget_->setCurrentWidget(t);
 
       t->setPlainText(in.readAll());
       file.close();
 
-      openedFiles_.insert(fileName, t);
+      openedFiles_.insert(fileInfo.absoluteFilePath(), t);
 
       connect_textedit(t);
     } else {
@@ -441,8 +442,8 @@ void MainWindow::connect_components() {
     }
   });
   connect(menuBar_->actOpen_, &QAction::triggered, [=] {
-    QString name = QFileDialog::getOpenFileName(this, tr("打开文件"), QDir::homePath(),
-                                                tr("所有文件(*.*)"));
+    QString name = QFileDialog::getOpenFileName(
+        this, tr("打开文件"), QDir::currentPath(), tr("所有文件(*.*)"));
     if (name.isNull()) {
       return;
     }
