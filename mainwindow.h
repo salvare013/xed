@@ -18,6 +18,7 @@ class MainWindow : public QMainWindow {
 
  signals:
   void edit_font_changed();
+  void show_event_end();
 
  public:
   MainWindow(QWidget* parent = nullptr);

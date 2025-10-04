@@ -3,8 +3,7 @@
 #include <QClipboard>
 #include <QWheelEvent>
 
-TextEdit::TextEdit(const QFont& font, QWidget* parent)
-    : QPlainTextEdit{parent} {
+TextEdit::TextEdit(const QFont& font, QWidget* parent) : QPlainTextEdit{parent} {
   setFont(font);
   setFocus();
 }

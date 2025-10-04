@@ -280,7 +280,8 @@ void MainWindow::file_open(const QString& fileName) {
                            tr("文件%1体积太大,无法打开!").arg(fileInfo.fileName()));
     }
   } else {
-    QMessageBox::critical(this, tr("打开文件"), tr("打开文件失败!"));
+    QMessageBox::critical(this, tr("打开文件"),
+                          tr("打开文件%1失败!").arg(fileInfo.fileName()));
   }
 }
 
@@ -348,26 +349,22 @@ void MainWindow::showEvent(QShowEvent* event) {
   update_status(0);
   // emit
   emit edit_font_changed();
-
-  // check arguments
-  QStringList arguments = QCoreApplication::arguments();
-  qDebug() << arguments;
-  if (arguments.size() == 2) {
-    if (arguments[1] == "-v") {
-      statusBar_->showMessage(tr("xed文本编辑器,version:0.1"));
-      qDebug() << "xed version 0.1";
-    } else {
-      QFileInfo path(arguments[1]);
-      if (path.exists() && path.isFile()) {
-        qDebug() << "is file";
-
-      } else {
-        qDebug() << "no file";
-      }
-    }
-  }
+  emit show_event_end();
 }
+
 void MainWindow::connect_components() {
+  connect(
+      this, &MainWindow::show_event_end, this,
+      [=] {
+        QStringList arguments = QCoreApplication::arguments();
+        qDebug() << arguments;
+        if (arguments.size() > 1) {
+          for (int i = 1; i < arguments.size(); ++i) {
+            file_open(arguments[i]);
+          }
+        }
+      },
+      Qt::QueuedConnection);
   connect(tabWidget_, &QTabWidget::currentChanged, this, &MainWindow::update_status);
   connect(menuBar_->actReopen_, &QAction::triggered, this, &MainWindow::file_reopen);
   connect(statusBar_->codecLabel_, &ClickableLabel::clicked, this,
