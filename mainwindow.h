@@ -23,14 +23,14 @@ class MainWindow : public QMainWindow {
   MainWindow(QWidget* parent = nullptr);
   ~MainWindow();
 
- public slots:
+ public:
   void file_close(int index);
-  void file_open();
+  void file_open(const QString& fileName);
   void file_save(int index);
   void file_save_as(int index);
   void file_close_all();
-  void file_new();
-  void file_new_text();
+  void file_new(const QString& name);
+  void file_new_text(const QString& name);
   void file_reopen();
 
   void edit_go();

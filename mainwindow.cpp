@@ -154,11 +154,12 @@ void MainWindow::file_close_all() {
   tabWidget_->clear();
 }
 
-void MainWindow::file_new() {
-  QString name =
-      QInputDialog::getText(this, tr("新建文件"), tr("输入文件名:"), QLineEdit::Normal,
-                            "", nullptr, Qt::WindowCloseButtonHint);
-  if (name.isNull()) {
+void MainWindow::file_new(const QString& name) {
+  qDebug() << name;
+
+  QFileInfo fileInfo(name);
+  if (!fileInfo.exists() || !fileInfo.isFile()) {
+    qDebug() << "no file";
     return;
   }
   TextEdit* t = new TextEdit(editFont_, this);
@@ -167,13 +168,16 @@ void MainWindow::file_new() {
   tabWidget_->addTab(t, name);
   tabWidget_->setCurrentWidget(t);
 
+  openedFiles_.insert(name, t);
+
   connect_textedit(t);
 }
-void MainWindow::file_new_text() {
+
+void MainWindow::file_new_text(const QString& name) {
   TextEdit* t = new TextEdit(editFont_, this);
   textCodecs_.insert(t, defaultCodec_);
 
-  tabWidget_->addTab(t, tr("无标题"));
+  tabWidget_->addTab(t, name);
   tabWidget_->setCurrentWidget(t);
 
   connect_textedit(t);
@@ -227,29 +231,31 @@ void MainWindow::edit_go() {
     }
   }
 }
-void MainWindow::file_open() {
-  QString fileName = QFileDialog::getOpenFileName(
-      this, tr("打开文件"), QDir::homePath(), tr("所有文件(*.*)"));
-  if (fileName.isNull()) {
+void MainWindow::file_open(const QString& fileName) {
+  // check file legal
+  QFileInfo fileInfo(fileName);
+  if (!fileInfo.exists() || !fileInfo.isFile()) {
+    qDebug() << "no file";
     return;
   }
-
   QMimeDatabase mime;
   QString mimeType = mime.mimeTypeForFile(fileName).name().toLower();
   if (!mimeType.startsWith("text/")) {
-    if (QFileInfo(fileName).suffix() == "json") {
-      qDebug() << "json file";
+    if (fileInfo.suffix() == "js" || fileInfo.suffix() == "json") {
+      qDebug() << "text file";
     } else {
-      QMessageBox::warning(this, tr("打开文件"), tr("打开的文件类型不支持,无法打开!"));
+      QMessageBox::warning(this, tr("打开文件"),
+                           tr("文件%1类型不支持,无法打开!").arg(fileInfo.fileName()));
       return;
     }
   }
-
+  // open logic
   if (openedFiles_.is_contains_key(fileName)) {
     QMessageBox::warning(this, tr("打开文件"), tr("文件%1已打开!").arg(fileName));
     tabWidget_->setCurrentWidget(openedFiles_.value(fileName));
     return;
   }
+
   QFile file(fileName);
 
   if (file.open(QIODevice::Text | QIODevice::ReadOnly)) {
@@ -266,17 +272,18 @@ void MainWindow::file_open() {
       t->setPlainText(in.readAll());
       file.close();
 
-      openedFiles_.insert(file.fileName(), t);
+      openedFiles_.insert(fileName, t);
 
       connect_textedit(t);
     } else {
-      QMessageBox::warning(this, tr("打开文件"), tr("文件体积太大,无法打开!"));
+      QMessageBox::warning(this, tr("打开文件"),
+                           tr("文件%1体积太大,无法打开!").arg(fileInfo.fileName()));
     }
-
   } else {
     QMessageBox::critical(this, tr("打开文件"), tr("打开文件失败!"));
   }
 }
+
 void MainWindow::file_reopen() {
   if (openedFiles_.is_contains_value(tabWidget_->currentWidget())) {
     statusBar_->codecLabel_->open_selector();
@@ -436,10 +443,26 @@ void MainWindow::connect_components() {
       file_save(tabWidget_->currentIndex());
     }
   });
-  connect(menuBar_->actOpen_, &QAction::triggered, this, &MainWindow::file_open);
+  connect(menuBar_->actOpen_, &QAction::triggered, [=] {
+    QString name = QFileDialog::getOpenFileName(this, tr("打开文件"), QDir::homePath(),
+                                                tr("所有文件(*.*)"));
+    if (name.isNull()) {
+      return;
+    }
+    file_open(name);
+  });
   connect(menuBar_->actQuit_, &QAction::triggered, [=] { this->close(); });
-  connect(menuBar_->actNewText_, &QAction::triggered, this, &MainWindow::file_new_text);
-  connect(menuBar_->actNew_, &QAction::triggered, this, &MainWindow::file_new);
+  connect(menuBar_->actNewText_, &QAction::triggered,
+          [=] { file_new_text(tr("无标题")); });
+  connect(menuBar_->actNew_, &QAction::triggered, [=] {
+    QString name = QInputDialog::getText(this, tr("新建文件"), tr("输入文件名:"),
+                                         QLineEdit::Normal, "", nullptr,
+                                         Qt::WindowCloseButtonHint);
+    if (name.isNull()) {
+      return;
+    }
+    file_new_text(name);
+  });
   connect(tabWidget_, &QTabWidget::tabCloseRequested, this, &MainWindow::file_close);
   connect(menuBar_->actClose_, &QAction::triggered, [=] {
     if (tabWidget_->count()) {
