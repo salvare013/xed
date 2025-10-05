@@ -29,7 +29,7 @@
       "displayName": "Vcpkg-Windows Release",
       "description": "Vcpkg-Windows Release build",
       "generator": "Ninja",
-      "binaryDir": "${sourceDir}/build/Release",
+      "binaryDir": "${sourceDir}/build/WRelease",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
         "CMAKE_TOOLCHAIN_FILE": "~/vcpkg/scripts/buildsystems/vcpkg.cmake",
