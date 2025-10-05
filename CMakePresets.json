@@ -4,7 +4,6 @@
     {
       "name": "vcpkg-debug",
       "displayName": "Vcpkg Debug",
-      "description": "Vcpkg Debug build",
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/build/Debug",
       "cacheVariables": {
@@ -16,7 +15,6 @@
     {
       "name": "vcpkg-release",
       "displayName": "Vcpkg Release",
-      "description": "Vcpkg Release build",
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/build/Release",
       "cacheVariables": {
@@ -25,11 +23,22 @@
       }
     },
     {
-      "name": "vcpkg-windows-release",
-      "displayName": "Vcpkg-Windows Release",
-      "description": "Vcpkg-Windows Release build",
+      "name": "vcpkg-windows-mt-release",
+      "displayName": "Vcpkg-Windows MT Release",
       "generator": "Ninja",
-      "binaryDir": "${sourceDir}/build/WRelease",
+      "binaryDir": "${sourceDir}/build/MTRelease",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_TOOLCHAIN_FILE": "~/vcpkg/scripts/buildsystems/vcpkg.cmake",
+        "VCPKG_TARGET_TRIPLET": "x64-windows-static",
+        "CMAKE_MSVC_RUNTIME_LIBRARY": "MultiThreaded"
+      }
+    },
+    {
+      "name": "vcpkg-windows-md-release",
+      "displayName": "Vcpkg-Windows MD Release",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/MDRelease",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
         "CMAKE_TOOLCHAIN_FILE": "~/vcpkg/scripts/buildsystems/vcpkg.cmake",
