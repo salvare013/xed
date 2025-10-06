@@ -155,25 +155,6 @@ void MainWindow::file_close_all() {
 }
 
 void MainWindow::file_new(const QString& name) {
-  qDebug() << name;
-
-  QFileInfo fileInfo(name);
-  if (!fileInfo.exists() || !fileInfo.isFile()) {
-    qDebug() << "no file";
-    return;
-  }
-  TextEdit* t = new TextEdit(editFont_, this);
-  textCodecs_.insert(t, defaultCodec_);
-
-  tabWidget_->addTab(t, name);
-  tabWidget_->setCurrentWidget(t);
-
-  openedFiles_.insert(name, t);
-
-  connect_textedit(t);
-}
-
-void MainWindow::file_new_text(const QString& name) {
   TextEdit* t = new TextEdit(editFont_, this);
   textCodecs_.insert(t, defaultCodec_);
 
@@ -450,8 +431,7 @@ void MainWindow::connect_components() {
     file_open(name);
   });
   connect(menuBar_->actQuit_, &QAction::triggered, [=] { this->close(); });
-  connect(menuBar_->actNewText_, &QAction::triggered,
-          [=] { file_new_text(tr("无标题")); });
+  connect(menuBar_->actNewText_, &QAction::triggered, [=] { file_new(tr("无标题")); });
   connect(menuBar_->actNew_, &QAction::triggered, [=] {
     QString name = QInputDialog::getText(this, tr("新建文件"), tr("输入文件名:"),
                                          QLineEdit::Normal, "", nullptr,
@@ -459,7 +439,7 @@ void MainWindow::connect_components() {
     if (name.isNull()) {
       return;
     }
-    file_new_text(name);
+    file_new(name);
   });
   connect(tabWidget_, &QTabWidget::tabCloseRequested, this, &MainWindow::file_close);
   connect(menuBar_->actClose_, &QAction::triggered, [=] {

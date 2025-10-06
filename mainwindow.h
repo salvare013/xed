@@ -31,7 +31,6 @@ class MainWindow : public QMainWindow {
   void file_save_as(int index);
   void file_close_all();
   void file_new(const QString& name);
-  void file_new_text(const QString& name);
   void file_reopen();
 
   void edit_go();
