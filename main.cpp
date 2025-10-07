@@ -17,5 +17,13 @@ int main(int argc, char* argv[]) {
     qDebug() << "translator failed";
   }
 
+  QStringList arguments = QCoreApplication::arguments();
+  qDebug() << arguments;
+  if (arguments.size() > 1) {
+    for (int i = 1; i < arguments.size(); ++i) {
+      w->file_open(arguments[i]);
+    }
+  }
+
   return a.exec();
 }

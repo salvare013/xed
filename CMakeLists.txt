@@ -10,6 +10,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Qt5 REQUIRED COMPONENTS Widgets)
+find_package(Qt5 REQUIRED COMPONENTS Concurrent)
 
 set(PROJECT_SOURCES
     main.cpp
@@ -39,3 +40,4 @@ else()
 endif()
 
 target_link_libraries(xed PRIVATE Qt5::Widgets)
+target_link_libraries(xed PRIVATE Qt5::Concurrent)

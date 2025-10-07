@@ -18,7 +18,6 @@ class MainWindow : public QMainWindow {
 
  signals:
   void edit_font_changed();
-  void show_event_end();
 
  public:
   MainWindow(QWidget* parent = nullptr);
@@ -27,10 +26,14 @@ class MainWindow : public QMainWindow {
  public:
   void file_close(int index);
   void file_open(const QString& fileName);
+  QString once_read_text(QFile& file);
+
   void file_save(int index);
   void file_save_as(int index);
+  void file_save_all();
+
   void file_close_all();
-  void file_new(const QString& name);
+  QWidget* file_new(const QString& name, const QString& content = "");
   void file_reopen();
 
   void edit_go();
@@ -41,6 +44,8 @@ class MainWindow : public QMainWindow {
   void zoom_view_font(int delta);
 
  private:
+  static constexpr int OneMB_ = 1024 * 1024;
+
   const QString defaultCodec_{"UTF-8"};
 
   BiMap<QString, QWidget*> openedFiles_;

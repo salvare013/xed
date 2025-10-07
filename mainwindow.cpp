@@ -120,6 +120,12 @@ void MainWindow::file_save_as(int index) {
   }
 }
 
+void MainWindow::file_save_all() {
+  for (int i = 0; i < tabWidget_->count(); i++) {
+    file_save(i);
+  }
+}
+
 void MainWindow::file_close_all() {
   if (!tabWidget_->count()) {
     return;
@@ -154,14 +160,17 @@ void MainWindow::file_close_all() {
   tabWidget_->clear();
 }
 
-void MainWindow::file_new(const QString& name) {
+QWidget* MainWindow::file_new(const QString& name, const QString& content) {
   TextEdit* t = new TextEdit(editFont_, this);
   textCodecs_.insert(t, defaultCodec_);
+  t->setPlainText(content);
 
   tabWidget_->addTab(t, name);
   tabWidget_->setCurrentWidget(t);
 
   connect_textedit(t);
+
+  return t;
 }
 void MainWindow::view_select_edit_font() {
   statusBar_->fontLabel_->open_selector();
@@ -213,57 +222,55 @@ void MainWindow::edit_go() {
   }
 }
 void MainWindow::file_open(const QString& fileName) {
-  // check file legal
   QFileInfo fileInfo(fileName);
+  QString filePath = fileInfo.absoluteFilePath();
+
+  if (openedFiles_.is_contains_key(filePath)) {
+    QMessageBox::warning(this, tr("打开文件"), tr("文件%1已打开!").arg(filePath));
+    tabWidget_->setCurrentWidget(openedFiles_.value(filePath));
+    return;
+  }
+  // check file legal
   if (!fileInfo.exists() || !fileInfo.isFile()) {
     qDebug() << "no file";
     return;
   }
   QMimeDatabase mime;
   QString mimeType = mime.mimeTypeForFile(fileName).name().toLower();
-  if (!mimeType.startsWith("text/")) {
-    if (fileInfo.suffix() == "js" || fileInfo.suffix() == "json") {
-      qDebug() << "text file";
-    } else {
+
+  QFile file(filePath);
+
+  if (mimeType.startsWith("text/")) {
+    if (file.size() > 50 * OneMB_) {
       QMessageBox::warning(this, tr("打开文件"),
-                           tr("文件%1类型不支持,无法打开!").arg(fileInfo.fileName()));
-      return;
+                           tr("文件%1体积太大,无法打开!").arg(filePath));
+    } else {
+      QString text = once_read_text(file);
+      if (!text.isEmpty()) {
+        openedFiles_.insert(filePath, file_new(fileInfo.fileName(), text));
+      }
     }
-  }
-  // open logic
-  if (openedFiles_.is_contains_key(fileInfo.absoluteFilePath())) {
+  } else if (mimeType.startsWith("application/")) {
+    qDebug() << mimeType;
+
+  } else {
     QMessageBox::warning(this, tr("打开文件"),
-                         tr("文件%1已打开!").arg(fileInfo.absoluteFilePath()));
-    tabWidget_->setCurrentWidget(openedFiles_.value(fileInfo.absoluteFilePath()));
-    return;
+                         tr("文件%1类型不支持,无法打开!").arg(filePath));
   }
+}
 
-  QFile file(fileInfo.absoluteFilePath());
-
+QString MainWindow::once_read_text(QFile& file) {
   if (file.open(QIODevice::Text | QIODevice::ReadOnly)) {
-    if (file.size() < 1024 * 512) {
-      QTextStream in(&file);
-      in.setCodec(defaultCodec_.toUtf8());
+    QTextStream in(&file);
+    in.setCodec(defaultCodec_.toUtf8());
+    QString content = in.readAll();
+    file.close();
 
-      TextEdit* t = new TextEdit(editFont_, this);
-      textCodecs_.insert(t, defaultCodec_);
-
-      tabWidget_->addTab(t, fileInfo.fileName());
-      tabWidget_->setCurrentWidget(t);
-
-      t->setPlainText(in.readAll());
-      file.close();
-
-      openedFiles_.insert(fileInfo.absoluteFilePath(), t);
-
-      connect_textedit(t);
-    } else {
-      QMessageBox::warning(this, tr("打开文件"),
-                           tr("文件%1体积太大,无法打开!").arg(fileInfo.fileName()));
-    }
+    return content;
   } else {
     QMessageBox::critical(this, tr("打开文件"),
-                          tr("打开文件%1失败!").arg(fileInfo.fileName()));
+                          tr("打开文件%1失败!").arg(file.fileName()));
+    return QString();
   }
 }
 
@@ -331,22 +338,9 @@ void MainWindow::showEvent(QShowEvent* event) {
   update_status(0);
   // emit
   emit edit_font_changed();
-  emit show_event_end();
 }
 
 void MainWindow::connect_components() {
-  connect(
-      this, &MainWindow::show_event_end, this,
-      [=] {
-        QStringList arguments = QCoreApplication::arguments();
-        qDebug() << arguments;
-        if (arguments.size() > 1) {
-          for (int i = 1; i < arguments.size(); ++i) {
-            file_open(arguments[i]);
-          }
-        }
-      },
-      Qt::QueuedConnection);
   connect(tabWidget_, &QTabWidget::currentChanged, this, &MainWindow::update_status);
   connect(menuBar_->actReopen_, &QAction::triggered, this, &MainWindow::file_reopen);
   connect(statusBar_->codecLabel_, &ClickableLabel::clicked, this,
@@ -409,11 +403,7 @@ void MainWindow::connect_components() {
       file_save_as(tabWidget_->currentIndex());
     }
   });
-  connect(menuBar_->actSaveAll_, &QAction::triggered, [=] {
-    for (int i = 0; i < tabWidget_->count(); i++) {
-      file_save(i);
-    }
-  });
+  connect(menuBar_->actSaveAll_, &QAction::triggered, this, &MainWindow::file_save_all);
   connect(menuBar_->actCloseAll_, &QAction::triggered, this,
           &MainWindow::file_close_all);
 
