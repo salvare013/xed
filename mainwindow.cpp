@@ -250,9 +250,6 @@ void MainWindow::file_open(const QString& fileName) {
         openedFiles_.insert(filePath, file_new(fileInfo.fileName(), text));
       }
     }
-  } else if (mimeType.startsWith("application/")) {
-    qDebug() << mimeType;
-
   } else {
     QMessageBox::warning(this, tr("打开文件"),
                          tr("文件%1类型不支持,无法打开!").arg(filePath));
