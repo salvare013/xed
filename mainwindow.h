@@ -51,7 +51,7 @@ class MainWindow : public QMainWindow {
   BiMap<QString, QWidget*> openedFiles_;
   QHash<QWidget*, QString> textCodecs_;
 
-  QDir xedPath_{QDir::homePath() + "/xed/"};
+  QString xedPath_{QDir::homePath() + "/xed/"};
 
   QFont editFont_{"Consolas", 24};
   QFont viewFont_{"宋体", 16};

@@ -83,12 +83,12 @@ void MainWindow::file_save_as(int index) {
   if (!tabWidget_->widget(index)) {
     return;
   }
-  xedPath_.mkdir(xedPath_.path());
 
-  QString fileName = QFileDialog::getSaveFileName(
-      this, tr("保存文件"),
-      xedPath_.path() + QDir::separator() + tabWidget_->tabText(index),
-      tr("文本文件(*.txt)"));
+  QDir::home().mkdir("xed");
+
+  QString fileName = QFileDialog::getSaveFileName(this, tr("保存文件"),
+                                                  xedPath_ + tabWidget_->tabText(index),
+                                                  tr("文本文件(*.txt)"));
   if (fileName.isNull()) {
     return;
   }
