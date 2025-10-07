@@ -241,7 +241,7 @@ void MainWindow::file_open(const QString& fileName) {
   QFile file(filePath);
 
   if (mimeType.startsWith("text/")) {
-    if (file.size() > 50 * OneMB_) {
+    if (file.size() > 100 * OneMB_) {
       QMessageBox::warning(this, tr("打开文件"),
                            tr("文件%1体积太大,无法打开!").arg(filePath));
     } else {
